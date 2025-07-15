@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guess the Real Madrid Player</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .game-container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+      }
+      h1 {
+        color: #003399;
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      #playerPhoto {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        background: #eee;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .option-btn {
+        background: #003399;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .option-btn:hover {
+        background: #0055cc;
+      }
+      .correct {
+        background: #4caf50 !important;
+      }
+      .wrong {
+        background: #f44336 !important;
+      }
+      #result {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      #nextBtn {
+        margin-top: 20px;
+        padding: 8px 16px;
+        background: #222;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        display: none;
+        cursor: pointer;
+      }
+      #score {
+        margin-top: 10px;
+        font-size: 16px;
+        color: #333;
+      }
+      #navbar {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        background-color: #003399;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      #navbar li {
+        flex: 1;
+        text-align: center;
+      }
+      #navbar a {
+        display: block;
+        padding: 14px 0;
+        color: white;
+        text-decoration: none;
+        transition: background 0.3s;
+      }
+      #navbar a:hover {
+        background: #0055cc;
+      }
+      #navbar .active {
+        background: #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="navbar">
+      <li><a class="active" href="index.html">Home</a></li>
+      <li><a href="news.html">News</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="game-container">
+      <h1>Guess the Real Madrid Player</h1>
+      <img id="playerPhoto" src="" alt="Player Photo" />
+      <div class="options" id="options"></div>
+      <div id="result"></div>
+      <div id="score">Score: 0</div>
+      <button id="nextBtn" onclick="loadQuestion()">Next</button>
+    </div>
+
+    <script>
+      const players = [
+        {
+          name: "Thibaut Courtois",
+          photo:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Thibaut_Courtois_WC2022.jpg/250px-Thibaut_Courtois_WC2022.jpg",
+        },
+        {
+          name: "Dani Carvajal",
+          photo:
+            "https://upload.wikimedia.org/wikipedia/commons/b/b6/UEFA_EURO_qualifiers_Sweden_vs_Spain_20191015_Dani_Carvajal_10_%28cropped%29.jpg",
+        },
+        {
+          name: "Éder Militão",
+          photo:
+            "https://assets.laliga.com/squad/2024/t186/p218449/2048x2048/p218449_t186_2024_1_002_000.jpg",
+        },
+        {
+          name: "Antonio Rüdiger",
+          photo:
+            "https://upload.wikimedia.org/wikipedia/commons/3/3e/20180602_FIFA_Friendly_Match_Austria_vs._Germany_Antonio_R%C3%BCdiger_850_0711.jpg",
+        },
+        {
+          name: "Ferland Mendy",
+          photo:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8Hn_NSsx9ByUI9Fxmtk5jW_6JJ6U79x8ZaQ&s",
+        },
+        {
+          name: "Eduardo Camavinga",
+          photo: "https://football-talk.co.uk/wp-content/uploads/2023/01/eduardo-camavinga123.jpg",
+        },
+        {
+          name: "Aurélien Tchouaméni",
+          photo: "https://s.hs-data.com/bilder/spieler/gross/347645.jpg",
+        },
+        {
+          name: "Luka Modrić",
+          photo: "https://upload.wikimedia.org/wikipedia/commons/e/e9/ISL-HRV_%287%29.jpg",
+        },
+        {
+          name: "Toni Kroos",
+          photo: "https://s.hs-data.com/bilder/spieler/gross/84724.jpg?fallback=png",
+        },
+        {
+          name: "Jude Bellingham",
+          photo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/25th_Laureus_World_Sports_Awards_-_Red_Carpet_-_Jude_Bellingham_-_240422_190551-2_%28cropped%29.jpg",
+        },
+        {
+          name: "Vinícius Júnior",
+          photo: "https://cdn.vox-cdn.com/thumbor/au54DdgaAGhEhD1vMHPgZC83Nxw=/0x0:3211x4282/1220x813/filters:focal(929x652:1441x1164):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71377994/1243234699.0.jpg",
+        },
+        {
+          name: "Rodrygo Goes",
+          photo: "https://upload.wikimedia.org/wikipedia/commons/0/05/Rodrygo_2023_%28cropped%29.jpg",
+        },
+        {
+          name: "Brahim Díaz",
+          photo: "https://en.hibapress.com/wp-content/uploads/2024/10/Brahim-Diaz-is-on-a-new-mission-at-Real-Madrid-780x470.jpeg",
+        },
+        {
+          name: "Joselu",
+          photo: "https://upload.wikimedia.org/wikipedia/commons/9/96/BHA_5_v_Espanyol_1_pre_season_30_07_2022_15_%28cropped%29.jpg",
+        },
+        {
+          name: "Kepa Arrizabalaga",
+          photo: "https://themadridzone.com/wp-content/uploads/2023/10/Kepa-RMA-1024x683.jpg",
+        },
+        {
+          name: "Fran García",
+          photo: "https://www.realtotal.de/wp-content/uploads/2023/08/fran-garcia-praesentation-rmcom.jpg",
+        },
+        {
+          name: "Nacho Fernández",
+          photo: "https://i.namu.wiki/i/Wr1fmLbFT-FZbSzGQIDldKuJPaa-nl_uv6pder5j77V2dQRqnps64-iewK8XROFh60vLdHvsBJ6znFdSPkh33vt2PNuShwbu7jUBTEU1Mh3quToM8Ef24iO6R9M6T93Wni7_mlXokaLTauBVmyTDVA.webp",
+        },
+        {
+          name: "Lucas Vázquez",
+          photo: "https://upload.wikimedia.org/wikipedia/commons/5/51/Lucas_V%C3%A1zquez.jpg",
+        },
+        {
+          name: "Arda Güler",
+          photo: "https://cdn.vox-cdn.com/thumbor/pJ_OgHorl6dreGwCR7-vbk86pq4=/0x0:4225x2790/1220x813/filters:focal(1974x630:2650x1306):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/74074857/2213570894.0.jpg",
+        },
+        {
+          name: "Federico Valverde",
+          photo: "https://s.hs-data.com/bilder/spieler/gross/324470.jpg?fallback=png",
+        },
+      ];
+
+      let correctPlayer;
+      let score = 0;
+
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      function loadQuestion() {
+        document.getElementById("result").textContent = "";
+        document.getElementById("nextBtn").style.display = "none";
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+
+        // Pick a random player as the answer
+        correctPlayer = players[Math.floor(Math.random() * players.length)];
+
+        // Show the photo
+        document.getElementById("playerPhoto").src = correctPlayer.photo;
+        document.getElementById("playerPhoto").alt = correctPlayer.name;
+
+        // Pick 3 other random players for wrong answers
+        const wrongPlayers = shuffle(
+          players.filter((p) => p !== correctPlayer)
+        ).slice(0, 3);
+        const allOptions = shuffle([correctPlayer, ...wrongPlayers]);
+
+        // Create buttons
+        allOptions.forEach((player) => {
+          const btn = document.createElement("button");
+          btn.textContent = player.name;
+          btn.className = "option-btn";
+          btn.onclick = () => checkAnswer(btn, player.name);
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function checkAnswer(button, selectedName) {
+        const buttons = document.querySelectorAll(".option-btn");
+        buttons.forEach((btn) => (btn.disabled = true));
+
+        if (selectedName === correctPlayer.name) {
+          button.classList.add("correct");
+          document.getElementById("result").textContent = "Correct! ✅";
+          score++;
+          document.getElementById("score").textContent = "Score: " + score;
+        } else {
+          button.classList.add("wrong");
+          document.getElementById("result").textContent = "Wrong! ❌";
+          buttons.forEach((btn) => {
+            if (btn.textContent === correctPlayer.name) {
+              btn.classList.add("correct");
+            }
+          });
+        }
+        document.getElementById("nextBtn").style.display = "inline-block";
+      }
+
+      loadQuestion();
+    </script>
+  </body>
+</html>
